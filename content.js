@@ -18,9 +18,11 @@ class ContentSafetyGuard {
         action: 'getSafetyScore',
         url: currentUrl
       });
+      
       if (response && response.score !== undefined) {
-        this.displaySafetyScore(response.score, response.score >= 50, response.vtMalicious);
-        if (response.score < 30 || response.vtMalicious > 0) {
+        this.displaySafetyScore(response.score, response.isMalicious, response.vtMalicious);
+        
+        if (response.isMalicious) {
           this.showWarningBanner(response.vtMalicious);
         }
       }
@@ -29,7 +31,7 @@ class ContentSafetyGuard {
     }
   }
   
-  displaySafetyScore(score, isSafe, vtMalicious) {
+  displaySafetyScore(score, isMalicious, vtMalicious) {
     let scoreElement = document.getElementById('url-safety-score');
     if (!scoreElement) {
       scoreElement = document.createElement('div');
@@ -38,7 +40,7 @@ class ContentSafetyGuard {
         position: fixed;
         top: 10px;
         right: 10px;
-        background: ${isSafe ? '#4CAF50' : '#f44336'};
+        background: ${isMalicious ? '#f44336' : '#4CAF50'};
         color: white;
         padding: 8px 12px;
         border-radius: 20px;
@@ -50,15 +52,8 @@ class ContentSafetyGuard {
       `;
       document.body.appendChild(scoreElement);
     }
-    scoreElement.textContent = `Safety: ${score}/100 | VT: ${vtMalicious} malicious`;
-    scoreElement.style.background = this.getScoreColor(score);
-  }
-  
-  getScoreColor(score) {
-    if (score >= 80) return '#4CAF50';
-    if (score >= 60) return '#FF9800';
-    if (score >= 40) return '#FFC107';
-    return '#f44336';
+    scoreElement.textContent = `Safety: ${score}/100 | VT: ${vtMalicious} detections`;
+    scoreElement.style.background = isMalicious ? '#f44336' : '#4CAF50';
   }
   
   showWarningBanner(vtMalicious) {
@@ -79,7 +74,7 @@ class ContentSafetyGuard {
       box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     `;
     banner.innerHTML = `
-      ⚠️ WARNING: This site is unsafe. VirusTotal flagged ${vtMalicious} malicious engines.
+      ⚠️ WARNING: This site is unsafe. VirusTotal flagged ${vtMalicious} engines.
       <button onclick="this.parentElement.remove()" style="margin-left: 10px; background: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Dismiss</button>
     `;
     document.body.appendChild(banner);
@@ -198,7 +193,7 @@ class ContentSafetyGuard {
     indicator.textContent = '🛡️';
     indicator.title = 'URL Safety Guard Active';
     indicator.addEventListener('click', () => {
-      alert('URL Safety Guard is running.\nCheck popup for details.');
+      alert('URL Safety Guard is running.\nOpen the extension popup for details.');
     });
     document.body.appendChild(indicator);
   }

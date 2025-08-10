@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "URL Safety Guard + VirusTotal Scanner",
-  "version": "2.1.0",
-  "description": "Blocks malicious URLs, detects XSS, and scans with VirusTotal in real-time",
+  "name": "URL Safety Guard + VirusTotal + PhishTank",
+  "version": "2.2.0",
+  "description": "Blocks malicious URLs, detects XSS, scans with VirusTotal, and imports PhishTank phishing feed",
   "permissions": [
     "tabs",
     "storage",
